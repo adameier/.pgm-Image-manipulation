@@ -1,3 +1,4 @@
+#include <memory>
 
 namespace MRXADA002 {
     class Image {
@@ -42,7 +43,7 @@ namespace MRXADA002 {
         void load(std::string filename);
         void save(std::string filename);
 
-        
+
 
     };
 }
