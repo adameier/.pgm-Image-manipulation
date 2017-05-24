@@ -102,8 +102,35 @@ Image & Image::operator=(Image && rhs) {
 
 Image::~Image() = default;
 
+//CONSTRUCTOR FOR TESTING
+Image::Image(int cols, int rows, const std::vector<unsigned char> & v) : width(cols), height(rows) {
+    data = std::unique_ptr<unsigned char[]>(new unsigned char[width*height]);
+    int i=0;
+    Image::iterator beg=this->begin(), end=this->end();
+    while (beg!=end) {    //assign buffer of unsigned chars to data block
+        *beg = v[i];
+        ++beg; ++i;
+    }
+}
+
+//== operator used for checking if 2 images hold same data
+bool Image::operator==(const Image &rhs) {
+    if (this->width!=rhs.width || this->height!=rhs.height)
+        return false;
+
+    Image::iterator beg=this->begin(), end=this->end();
+    Image::iterator inStart=rhs.begin(), inEnd=rhs.end();
+
+    while (beg!=end) {
+        if (*beg != *inStart)
+            return false;
+        ++beg; ++inStart;
+    }
+    return true;
+}
+
 //IMAGE OPERATORS FOR FUNCTIONS
-Image Image::operator+(const Image & rhs) {
+Image Image::operator+(const Image & rhs) { //add
     Image temp = *this;             //copy lhs Image into new and modify
     Image::iterator beg=temp.begin(), end=temp.end();
     Image::iterator inStart=rhs.begin(), inEnd=rhs.end();
@@ -118,7 +145,7 @@ Image Image::operator+(const Image & rhs) {
     return temp;
 }
 
-Image Image::operator-(const Image & rhs) {
+Image Image::operator-(const Image & rhs) { //subtract
     Image temp = *this;             //copy lhs Image into new and modify
     Image::iterator beg=temp.begin(), end=temp.end();
     Image::iterator inStart=rhs.begin(), inEnd=rhs.end();
@@ -133,7 +160,7 @@ Image Image::operator-(const Image & rhs) {
     return temp;
 }
 
-Image Image::operator!(void) {
+Image Image::operator!(void) { //invert
     Image temp = *this;             //copy lhs Image into new and modify
     Image::iterator beg=temp.begin(), end=temp.end();
 
@@ -144,7 +171,7 @@ Image Image::operator!(void) {
     return temp;
 }
 
-Image Image::operator/(const Image & rhs) {
+Image Image::operator/(const Image & rhs) { //mask
     Image temp = *this;             //copy lhs Image into new and modify
     Image::iterator beg=temp.begin(), end=temp.end();
     Image::iterator inStart=rhs.begin(), inEnd=rhs.end(); //rhs is the mask Image
@@ -157,7 +184,7 @@ Image Image::operator/(const Image & rhs) {
     return temp;
 }
 
-Image Image::operator*(int rhs) {
+Image Image::operator*(int rhs) { //threshold
     Image temp = *this;             //copy lhs Image into new and modify
     Image::iterator beg=temp.begin(), end=temp.end();
 

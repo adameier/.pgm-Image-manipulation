@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace MRXADA002 {
     class Image {
@@ -48,6 +49,10 @@ namespace MRXADA002 {
         Image & operator=(const Image & rhs);
         Image & operator=(Image && rhs);
         ~Image();
+
+        Image(int cols, int rows, const std::vector<unsigned char> & v); //CONSTRUCTOR FOR TESTING
+
+        bool operator==(const Image &rhs);
 
         //IMAGE OPERATORS FOR FUNCTIONS
         Image operator+(const Image & rhs); //addition

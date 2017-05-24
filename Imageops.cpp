@@ -79,7 +79,20 @@ int main(int argc, char** argv) {
     }
 
     else if (flag=="-t") {                       //threshold operation
+        std::stringstream ss;
+        ss << argv[2] << " " << argv[3] << " " << argv[4]; //parsing args
+        std::string imagefile;
+        ss >> imagefile;
+        Image image;
+        image.load(imagefile);                             //load file into image object
+        int f;
+        ss >> f;
+        Image output(image*f);                           //create new Image with performing operation
 
+        std::string outputName;
+        ss >> outputName;
+        std::string outputString = "output/"+ outputName +".pgm";
+        output.save(outputString, "Threshold");
 
     }
     return 0;
