@@ -16,6 +16,7 @@ namespace MRXADA002 {
 
         class iterator {
         private:
+            friend class Image;
             unsigned char *ptr;
 
             iterator(unsigned char *p); //constructor, used ONLY by image class
@@ -32,6 +33,10 @@ namespace MRXADA002 {
 
             unsigned char & operator*(void); //dereference operator
 
+            bool operator==(const iterator &rhs);
+
+            bool operator!=(const iterator &rhs);
+
 
         };
         iterator begin(void); //get start iterator of Image
@@ -45,7 +50,7 @@ namespace MRXADA002 {
         ~Image();
 
         void load(std::string filename);
-        void save(std::string filename);
+        void save(std::string filename, std::string comment);
 
 
 

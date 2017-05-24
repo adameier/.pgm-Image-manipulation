@@ -7,38 +7,52 @@ using namespace MRXADA002;
 
 //DEFINITIONS FOR iterator
 
-iterator::iterator(unsigned char *p) : ptr(p) {} //constructor used by Image
+Image::iterator::iterator(unsigned char *p) : ptr(p) {} //constructor used by Image
 
-iterator::iterator(const iterator & rhs) : ptr(rhs.ptr) {} //copy constructor
+Image::iterator::iterator(const iterator & rhs) : ptr(rhs.ptr) {} //copy constructor
 
-iterator & iterator::operator=(const iterator & rhs) { //copy assignment operator
-    ptr(rhs.ptr);
+Image::iterator & Image::iterator::operator=(const iterator & rhs) { //copy assignment operator
+    ptr = rhs.ptr;
     return *this;
 }
 
-iterator & iterator::operator++(void) { //increment pointer
+Image::iterator & Image::iterator::operator++(void) { //increment pointer
     ptr +=1;
     return *this;
 }
 
-iterator & iterator::operator--(void) { //decrement pointer
+Image::iterator & Image::iterator::operator--(void) { //decrement pointer
     ptr -=1;
     return *this;
 }
 
-unsigned char & iterator::operator*(void) { //dereference iterator
+unsigned char & Image::iterator::operator*(void) { //dereference iterator
     return *ptr;
+}
+
+bool Image::iterator::operator==(const iterator & rhs) {
+    if (ptr==rhs.ptr)
+        return true;
+    else
+        return false;
+}
+
+bool Image::iterator::operator!=(const iterator & rhs) {
+    if (operator==(rhs))
+        return false;
+    else
+        return true;
 }
 
 
 //DEFINITIONS for Image
 
 //get iterators for beginning and end of data
-iterator Image::begin() {
-    return iterator(data.get());
+Image::iterator Image::begin() {
+    return Image::iterator(data.get());
 }
-iterator Image::end() {
-    return iterator(data.get()+(width*height));
+Image::iterator Image::end() {
+    return Image::iterator(data.get()+(width*height));
 }
 
 //default constructor
@@ -46,7 +60,7 @@ Image::Image() : width(0), height(0) {}
 
 //copy constructor
 Image::Image(const Image & rhs) : width(rhs.width), height(rhs.height) {
-    data = std::make_unique<unsigned char[]>(width*height); //using unique ptrs, have to copy from rhs data into lhs data
+    data = std::unique_ptr<unsigned char[]>(new unsigned char[width*height]); //using unique ptrs, have to copy from rhs data into lhs data
 
     Image::iterator beg=this->begin(), end=this->end();
     Image::iterator inBeg=this->begin(), inStart=this->end();
@@ -65,7 +79,7 @@ Image & Image::operator=(const Image & rhs) {
     width = rhs.width;
     height = rhs.height;
 
-    data = std::make_unique<unsigned char[]>(width*height); //using unique ptrs, have to copy from rhs data into lhs data
+    data.reset(new unsigned char[width*height]); //using unique ptrs, have to copy from rhs data into lhs data
 
     Image::iterator beg=this->begin(), end=this->end();
     Image::iterator inBeg=this->begin(), inStart=this->end();
@@ -92,28 +106,36 @@ void Image::load(std::string filename) {
     std::ifstream pgm(cfilename, std::ios::binary);
 
     std::string line;
-    std::getLine(pgm, line);
+    std::getline(pgm, line);
     while (true) {
         if (line!="P5" || line.at(0)!='#') //used for discarding "P5" and comment lines
             break;
-        std::getLine(pgm, line);
+        std::getline(pgm, line);
     }
     //line will now have height and width
     std::stringstream ss; //used to get height and width from line
     ss.str(line);
     ss >> height >> width >> std::ws;
-    std::getLine(pgm, line); //discard next line "255"
+    std::getline(pgm, line); //discard next line "255"
     pgm >> std::ws;   //extract all whitespace until data block
 
-    data = std::make_unique<unsigned char[]>(width*height);
+    data = std::unique_ptr<unsigned char[]>(new unsigned char[width*height]);
 
-    pgm.read(data.get(), width*height);
+    pgm.read((char*)data.get(), width*height);
 
     pgm.close();
 
 }
 
-void Image::save(std::string filename) {
+void Image::save(std::string filename, std::string comment) {
     const char * cfilename = filename.c_str();
     std::ofstream pgm(cfilename, std::ios::binary);
+
+    pgm << "P5" << '\n';
+    pgm << "# " << comment << '\n';
+    pgm << height << " " << width << '\n';
+    pgm << 255 << '\n';
+    pgm.write((char*)data.get(), width*height);
+    pgm.close();
+
 }
