@@ -2,6 +2,7 @@
 #include <fstream>
 #include <istream>
 #include <sstream>
+#include <iostream>
 
 using namespace MRXADA002;
 
@@ -175,13 +176,13 @@ void Image::load(std::string filename) {
     std::ifstream pgm(cfilename, std::ios::binary);
 
     std::string line;
-    std::getline(pgm, line);
-    while (true) {
-        if (line!="P5" || line.at(0)!='#') //used for discarding "P5" and comment lines
+    while (std::getline(pgm, line)) {
+        if (line!="P5" && line.at(0)!='#') {
             break;
-        std::getline(pgm, line);
+        } //used for discarding "P5" and comment lines
     }
     //line will now have height and width
+    std::cout << line << '\n';
     std::stringstream ss; //used to get height and width from line
     ss.str(line);
     ss >> height >> width >> std::ws;
