@@ -1,4 +1,8 @@
+#ifndef IMAGE_H
+#define IMAGE_H
+
 #include <memory>
+#include <string>
 
 namespace MRXADA002 {
     class Image {
@@ -47,3 +51,4 @@ namespace MRXADA002 {
 
     };
 }
+#endif

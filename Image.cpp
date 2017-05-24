@@ -1,3 +1,8 @@
+#include "Image.h"
+#include <fstream>
+#include <istream>
+#include <sstream>
+
 using namespace MRXADA002;
 
 //DEFINITIONS FOR iterator
@@ -81,3 +86,34 @@ Image & Image::operator=(Image && rhs) {
 }
 
 Image::~Image() = default;
+
+void Image::load(std::string filename) {
+    const char * cfilename = filename.c_str();
+    std::ifstream pgm(cfilename, std::ios::binary);
+
+    std::string line;
+    std::getLine(pgm, line);
+    while (true) {
+        if (line!="P5" || line.at(0)!='#') //used for discarding "P5" and comment lines
+            break;
+        std::getLine(pgm, line);
+    }
+    //line will now have height and width
+    std::stringstream ss; //used to get height and width from line
+    ss.str(line);
+    ss >> height >> width >> std::ws;
+    std::getLine(pgm, line); //discard next line "255"
+    pgm >> std::ws;   //extract all whitespace until data block
+
+    data = std::make_unique<unsigned char[]>(width*height);
+
+    pgm.read(data.get(), width*height);
+
+    pgm.close();
+
+}
+
+void Image::save(std::string filename) {
+    const char * cfilename = filename.c_str();
+    std::ofstream pgm(cfilename, std::ios::binary);
+}
