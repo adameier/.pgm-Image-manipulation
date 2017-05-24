@@ -48,10 +48,10 @@ bool Image::iterator::operator!=(const iterator & rhs) {
 //DEFINITIONS for Image
 
 //get iterators for beginning and end of data
-Image::iterator Image::begin() {
+Image::iterator Image::begin() const {
     return Image::iterator(data.get());
 }
-Image::iterator Image::end() {
+Image::iterator Image::end() const {
     return Image::iterator(data.get()+(width*height));
 }
 
@@ -63,7 +63,7 @@ Image::Image(const Image & rhs) : width(rhs.width), height(rhs.height) {
     data = std::unique_ptr<unsigned char[]>(new unsigned char[width*height]); //using unique ptrs, have to copy from rhs data into lhs data
 
     Image::iterator beg=this->begin(), end=this->end();
-    Image::iterator inBeg=this->begin(), inStart=this->end();
+    Image::iterator inStart=rhs.begin(), inEnd=rhs.end();
 
     while (beg!=end) {
         *beg = *inStart;
@@ -82,7 +82,7 @@ Image & Image::operator=(const Image & rhs) {
     data.reset(new unsigned char[width*height]); //using unique ptrs, have to copy from rhs data into lhs data
 
     Image::iterator beg=this->begin(), end=this->end();
-    Image::iterator inBeg=this->begin(), inStart=this->end();
+    Image::iterator inStart=rhs.begin(), inEnd=rhs.end();
 
     while (beg!=end) {
         *beg = *inStart;
@@ -100,6 +100,75 @@ Image & Image::operator=(Image && rhs) {
 }
 
 Image::~Image() = default;
+
+//IMAGE OPERATORS FOR FUNCTIONS
+Image Image::operator+(const Image & rhs) {
+    Image temp = *this;             //copy lhs Image into new and modify
+    Image::iterator beg=temp.begin(), end=temp.end();
+    Image::iterator inStart=rhs.begin(), inEnd=rhs.end();
+
+    while (beg!=end) {
+        if ((*beg + *inStart)>255)  //clamp value to 255 if above
+            *beg = 255;
+        else
+            *beg = *beg + *inStart; //add lhs and rhs
+        ++beg; ++inStart;
+    }
+    return temp;
+}
+
+Image Image::operator-(const Image & rhs) {
+    Image temp = *this;             //copy lhs Image into new and modify
+    Image::iterator beg=temp.begin(), end=temp.end();
+    Image::iterator inStart=rhs.begin(), inEnd=rhs.end();
+
+    while (beg!=end) {
+        if ((*beg - *inStart)<0)  //clamp value to 0 if below
+            *beg = 0;
+        else
+            *beg = *beg - *inStart; //subtract rhs from lhs
+        ++beg; ++inStart;
+    }
+    return temp;
+}
+
+Image Image::operator!(void) {
+    Image temp = *this;             //copy lhs Image into new and modify
+    Image::iterator beg=temp.begin(), end=temp.end();
+
+    while (beg!=end) {
+        *beg = 255 - *beg; //set lhs val to 255 - lhs val
+        ++beg;
+    }
+    return temp;
+}
+
+Image Image::operator/(const Image & rhs) {
+    Image temp = *this;             //copy lhs Image into new and modify
+    Image::iterator beg=temp.begin(), end=temp.end();
+    Image::iterator inStart=rhs.begin(), inEnd=rhs.end(); //rhs is the mask Image
+
+    while (beg!=end) {
+        if (*inStart!=255)
+            *beg = 0;
+        ++beg; ++inStart;
+    }
+    return temp;
+}
+
+Image Image::operator*(int rhs) {
+    Image temp = *this;             //copy lhs Image into new and modify
+    Image::iterator beg=temp.begin(), end=temp.end();
+
+    while (beg!=end) {
+        if (*beg > rhs)
+            *beg = 255;
+        else
+            *beg = 0;
+        ++beg;
+    }
+    return temp;
+}
 
 void Image::load(std::string filename) {
     const char * cfilename = filename.c_str();

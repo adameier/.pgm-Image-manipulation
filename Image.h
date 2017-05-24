@@ -39,8 +39,8 @@ namespace MRXADA002 {
 
 
         };
-        iterator begin(void); //get start iterator of Image
-        iterator end(void); //get end iterator of Image
+        iterator begin(void) const; //get start iterator of Image
+        iterator end(void) const; //get end iterator of Image
 
         Image();
         Image(const Image & rhs);
@@ -48,6 +48,13 @@ namespace MRXADA002 {
         Image & operator=(const Image & rhs);
         Image & operator=(Image && rhs);
         ~Image();
+
+        //IMAGE OPERATORS FOR FUNCTIONS
+        Image operator+(const Image & rhs); //addition
+        Image operator-(const Image & rhs); //subtraction
+        Image operator!(void);              //inversion
+        Image operator/(const Image & rhs); //mask
+        Image operator*(int rhs); //threshold
 
         void load(std::string filename);
         void save(std::string filename, std::string comment);
