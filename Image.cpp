@@ -1,8 +1,5 @@
 #include "Image.h"
-#include <fstream>
-#include <istream>
-#include <sstream>
-#include <iostream>
+
 
 using namespace MRXADA002;
 
@@ -103,7 +100,7 @@ Image & Image::operator=(Image && rhs) {
 Image::~Image() = default;
 
 //CONSTRUCTOR FOR TESTING
-Image::Image(int cols, int rows, const std::vector<unsigned char> & v) : width(cols), height(rows) {
+Image::Image(int cols, int rows, const std::vector<int> & v) : width(cols), height(rows) {
     data = std::unique_ptr<unsigned char[]>(new unsigned char[width*height]);
     int i=0;
     Image::iterator beg=this->begin(), end=this->end();

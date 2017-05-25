@@ -4,6 +4,10 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <fstream>
+#include <istream>
+#include <sstream>
+#include <iostream>
 
 namespace MRXADA002 {
     class Image {
@@ -50,7 +54,7 @@ namespace MRXADA002 {
         Image & operator=(Image && rhs);
         ~Image();
 
-        Image(int cols, int rows, const std::vector<unsigned char> & v); //CONSTRUCTOR FOR TESTING
+        Image(int cols, int rows, const std::vector<int> & v); //CONSTRUCTOR FOR TESTING
 
         bool operator==(const Image &rhs);
 
