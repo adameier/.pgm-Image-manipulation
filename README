@@ -1,0 +1,28 @@
+When running the application, the options are of the form (I1 and I2 represent image file
+names):
+> -a I1 I2 (add I1 and I2)
+> -s I1 I2 (subtract I2 from I1)
+> -i I1 (invert I1)
+> -l I1 I2 (mask I1 with I2)
+> -t I1 f (threshold I1 with integer value f)
+The command line form will thus be:
+	imageops <option> OutputImageName
+where imageops is the name of your program, <option> represents the single
+operation to be performed (see above) and OutputImageName is the name for
+the result image. Note that only one option should be specified when you run the
+program.
+------------------------------------------------------------------
+> Image.h contains the declarations of the Image and iterator classes
+> Image.cpp contains all function/method definitions for both classes
+
+> Imageops.cpp contains a main method and serves as the driver class
+
+> The project can be compiled using 'make'
+    > This creates an executable named 'imageops'
+
+> Ouputted images will be created in the output/ directory
+
+> Tests.cpp contains unit tests for all methods/functions found in Image and iterator
+    > This can be compiled using 'make test', which will also run the tests
+
+> 'make clean' removes all binary files
